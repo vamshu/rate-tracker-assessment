@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: rates_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+
+  backend:
+    build: ./assess_pro
+    container_name: django_backend
+    command: sh -c "python wait_for_db.py && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./assess_pro:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build: ./frontend
+    container_name: next_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
