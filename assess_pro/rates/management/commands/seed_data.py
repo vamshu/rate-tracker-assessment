@@ -47,7 +47,7 @@ class Command(BaseCommand):
             except Exception as e:
                 print("--Skipping row:", e)
 
-        print(" Inserting into DB in batches...")
+        print(" Inserting into DB in batches...") # every batch has 5000 records
 
         batch_size = 5000
         for i in range(0, len(objs), batch_size):
