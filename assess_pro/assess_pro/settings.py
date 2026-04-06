@@ -21,6 +21,15 @@ INSTALLED_APPS = [
     'corsheaders',
     'rates',
 ]
+INSTALLED_APPS += [
+    "rest_framework.authtoken",
+]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -39,6 +48,13 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 ROOT_URLCONF = 'assess_pro.urls'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+    }
+}
 
 TEMPLATES = [
     {
