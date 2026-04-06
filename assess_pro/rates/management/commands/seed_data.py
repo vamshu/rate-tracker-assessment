@@ -7,17 +7,16 @@ from datetime import datetime
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        print("🚀 Starting data load...")
 
-        # ✅ Load only first 50k rows
+        # Load only first 50k rows
         df = pd.read_parquet("/app/rates_seed.parquet").head(50000)
 
-        print(f"📊 Loaded rows: {len(df)}")
+        print(f"Loaded rows: {len(df)}")
 
         objs = []
         count = 0
 
-        for row in df.itertuples(index=False):  # 🔥 faster than iterrows
+        for row in df.itertuples(index=False):
             try:
                 ingestion_ts = getattr(row, "ingestion_ts", None)
 
@@ -46,11 +45,10 @@ class Command(BaseCommand):
                     print(f"Processed {count} rows...")
 
             except Exception as e:
-                print("❌ Skipping row:", e)
+                print("--Skipping row:", e)
 
-        print("💾 Inserting into DB in batches...")
+        print(" Inserting into DB in batches...")
 
-        # 🔥 Insert in batches (prevents memory issues)
         batch_size = 5000
         for i in range(0, len(objs), batch_size):
             Rate.objects.bulk_create(
@@ -59,4 +57,4 @@ class Command(BaseCommand):
             )
             print(f"Inserted {i + batch_size} records...")
 
-        print(f"✅ Done! Inserted {len(objs)} records")
+        print(f"Done! Inserted {len(objs)} records")
